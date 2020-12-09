@@ -12,7 +12,7 @@ function [AIC, SBC, HQ, logL] = VARlag(ENDO,maxlag,const,EXOG,lag_ex)
 % -----------------------------------------------------------------------
 % OPTIONAL INPUT
 %   - const: 0 no constanrt; 1 constant ; 2 constant and trend; 
-%           3 constant and trend^2; [dflt = 1]
+%            3 constant and trend^2; [dflt = 1]
 %	- EXOG: optional matrix of variables (nobs x nvar_ex)
 %   - nlag_ex: number of lags for exogeonus variables (dflt = 0)
 % -----------------------------------------------------------------------
