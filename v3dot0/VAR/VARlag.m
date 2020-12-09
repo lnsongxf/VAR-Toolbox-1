@@ -1,9 +1,9 @@
-function [AIC, SBC, logL] = VARlag(ENDO,maxlag,const,EXOG,lag_ex)
+function [AIC, SBC, HQ, logL] = VARlag(ENDO,maxlag,const,EXOG,lag_ex)
 % =======================================================================
-% Determine VAR lag length with Akaike (AIC) and Schwarz Bayesian 
-% Criterion (SBC)criterion.
+% Determine VAR lag length with Akaike (AIC), Schwarz Bayesian 
+% Criterion (SBC) and Hannan–Quinn（HQ）criterion.
 % =======================================================================
-% [AIC, SBC, logL] = VARlag(ENDO,maxlag,const,EXOG,lag_ex)
+% [AIC, SBC, HQ, logL] = VARlag(ENDO,maxlag,const,EXOG,lag_ex)
 % -----------------------------------------------------------------------
 % INPUT
 %   - ENDO: an (nobs x nvar) matrix of endogenous variables.
@@ -19,6 +19,7 @@ function [AIC, SBC, logL] = VARlag(ENDO,maxlag,const,EXOG,lag_ex)
 % OUTPUT
 %	- AIC: preferred lag lenghth according to AIC
 %   - SBC: preferred lag lenghth according to SBC
+%   - HQ: preferred lag lenghth according to HQ
 %   - logL: vector [maxlag x 1] of loglikelihood
 % -----------------------------------------------------------------------
 % EXAMPLE
@@ -68,6 +69,7 @@ nvar_ex = num_ex*(lag_ex+1);
 logL = zeros(maxlag,1);
 AIC  = zeros(maxlag,1);
 SBC  = zeros(maxlag,1);
+HQ   = zeros(maxlag,1);
 for i=1:maxlag
     X = ENDO(maxlag+1-i:end,:);
     aux = VARmodel(X,i,const);
@@ -84,46 +86,16 @@ for i=1:maxlag
     SIGMA = (1/(NOBSadj)).*(RES)'*(RES);
     % Log-likelihood
     logL(i) = -(NOBS/2)* (NVAR*(1+log(2*pi)) + log(det(SIGMA)));
-    % AIC: �2*LogL/T + 2*n/T, where n is total number of parameters (ie, NVAR*NTOTCOEFF)
+    % AIC: –2*LogL/T + 2*n/T, where n is total number of parameters (ie, NVAR*NTOTCOEFF)
     AIC(i) = -2*(logL(i)/NOBS) + 2*(NVAR*NTOTCOEFF)/NOBS;
-    % SBC: �2*LogL/T + n*log(T)/T
+    % SBC: –2*LogL/T + n*log(T)/T
     SBC(i) = -2*(logL(i)/NOBS) + (NVAR*NTOTCOEFF)*log(NOBS)/NOBS;
+    % HQ=-2*LogL/T + 2*n*log(log(T))/T
+    HQ(i) = -2*(logL(i)/NOBS) + 2*(NVAR*NTOTCOEFF)*log(log(NOBS))/NOBS;
 end
 % Find the min of the info criteria
 AIC = find(AIC==min(AIC));
 SBC = find(SBC==min(SBC));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+HQ  = find(HQ==min(HQ));
 
 
